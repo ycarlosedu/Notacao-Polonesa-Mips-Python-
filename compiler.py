@@ -30,7 +30,7 @@ def EscreveMulti(somador1, somador2):
   arquivo.writelines(string) 
   arquivo.writelines(string2) 
   arquivo.writelines(string3) 
-  resultado = int(somador1) * int(somador2)
+  resultado = int(float(somador1)) * int(float(somador2))
   return str(resultado)
   
 def EscreveDiv(somador1, somador2):
@@ -80,16 +80,16 @@ def Finaliza(resultado):
   arquivo.writelines(string) 
   arquivo.writelines(string2) 
   arquivo.writelines(string3) 
-  print("resultado:" + resultado)
+  print("resultado:" + str(resultado))
 
-def VerificaDigito(digito, resultado):
+def VerificaDigito(digito, resultado, resultadoAnterior):
   if digito.isdigit():
     numeros.append(digito)
     global contador
     contador = contador + 1
-    # print(numeros)
-    # print(contador)
   else:
+    global x
+    x = x + 1
     if digito == "+":
       if contador >= 2:
         contador = 0
@@ -98,8 +98,11 @@ def VerificaDigito(digito, resultado):
         numeros.remove(numeros[len(numeros)-1])
       else:
         contador = 0
-        resultado = EscreveSoma(resultado, numeros[len(numeros)-1])
-        numeros.remove(numeros[len(numeros)-1])
+        if len(numeros) == 0:
+          resultado = EscreveSoma(resultadoAnterior, resultado)
+        else:
+          resultado = EscreveSoma(resultado, numeros[len(numeros)-1])
+          numeros.remove(numeros[len(numeros)-1])
     elif digito == "-":
       if contador >= 2:
         contador = 0
@@ -108,8 +111,11 @@ def VerificaDigito(digito, resultado):
         numeros.remove(numeros[len(numeros)-1])
       else:
         contador = 0
-        resultado = EscreveSub(resultado, numeros[len(numeros)-1])
-        numeros.remove(numeros[len(numeros)-1])
+        if len(numeros) == 0:
+          resultado = EscreveSub(resultadoAnterior, resultado)
+        else:
+          resultado = EscreveSub(resultado, numeros[len(numeros)-1])
+          numeros.remove(numeros[len(numeros)-1])
     elif digito == "/":
       if contador >= 2:
         contador = 0
@@ -118,8 +124,11 @@ def VerificaDigito(digito, resultado):
         numeros.remove(numeros[len(numeros)-1])
       else:
         contador = 0
-        resultado = EscreveDiv(resultado, numeros[len(numeros)-1])
-        numeros.remove(numeros[len(numeros)-1])
+        if len(numeros) == 0:
+          resultado = EscreveDiv(resultadoAnterior, resultado)
+        else:
+          resultado = EscreveDiv(resultado, numeros[len(numeros)-1])
+          numeros.remove(numeros[len(numeros)-1])
     elif digito == "*":
       if contador >= 2:
         contador = 0
@@ -128,8 +137,11 @@ def VerificaDigito(digito, resultado):
         numeros.remove(numeros[len(numeros)-1])
       else:
         contador = 0
-        resultado = EscreveMulti(resultado, numeros[len(numeros)-1])
-        numeros.remove(numeros[len(numeros)-1])
+        if len(numeros) == 0:
+          resultado = EscreveDiv(resultadoAnterior, resultado)
+        else:
+          resultado = EscreveMulti(resultado, numeros[len(numeros)-1])
+          numeros.remove(numeros[len(numeros)-1])
     elif digito == "f":
       EscreveFator(numeros[len(numeros)-1])
     elif digito == "p":
@@ -139,11 +151,15 @@ def VerificaDigito(digito, resultado):
   return resultado
   
 numeros = []
-resultado = 0
+resultado = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 contador = 0
+x = 1
 for i in range(len(operacao)):
-  resultado = VerificaDigito(operacao[i], resultado)
+  resultado[x] = VerificaDigito(operacao[i], resultado[x-1], resultado[x-2])
+  print(resultado[x])
+  if resultado[x] != resultado[x-1]:
+    x = x + 1
   
-Finaliza(resultado)
+Finaliza(resultado[x-1])
 
 arquivo.close() 
